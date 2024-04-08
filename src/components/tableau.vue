@@ -12,12 +12,12 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="person in people" :key="person.id" :class="{'bgc-light': getModuleType(person.id)}" class="text-center">
-              <td>{{ person.matricule }}</td>
-              <td>{{ person.name }}</td>
-              <td>{{ person.taux }}</td>
-              <td>{{ person.heure }}</td>
-              <td>{{ getPrestation(person.taux, person.heure) }}</td>
+            <tr v-for="peoples in people" :key="people.id" :class="{'bgc-light': getModuleType(people.id)}" class="text-center">
+              <td>{{ peoples.matricule }}</td>
+              <td>{{ peoples.nom }}</td>
+              <td>{{ peoples.tauxHoraire }}</td>
+              <td>{{ peoples.nbHeure }}</td>
+              <td>{{ getPrestation(peoples.tauxHoraire, peoples.nbHeure) }}</td>
               <td>
                 <div class="imgs">
                   <img src="./icons/check.svg" @click="goodJob">
@@ -36,11 +36,29 @@
 
 <script setup>
 
-    const people = [
-  { id: 1, matricule: 2024, name: 'Alice', taux: 25, heure: 5 },
-  { id: 2, matricule: 2025, name: 'Bob', taux: 30, heure: 4 },
-  { id: 3, matricule: 2026, name: 'Charlie', taux: 35, heure: 6 }
-];
+    let people = [];
+
+async function getAllDb(){
+   try {
+        const res = await axios.get('http://localhost:80/src/components/api.php');
+        const data = res.data;
+        localStorage.setItem('people', JSON.stringify(data));
+        console.log(people);
+        //  people.splice(0, people.length, ...data);
+     } catch (error) {
+         console.error('Error fetching data:', error);
+     }
+  // const res = await fetch('/api.php');
+  // const { results } = await res.json();
+  // console.log(results);
+}
+
+const storedData = localStorage.getItem('people');
+if (storedData) {
+  people = JSON.parse(storedData); // Récupérez les données depuis localStorage
+}
+
+getAllDb();
 
 function getModuleType(id) {
   return id % 2 !== 0;
@@ -48,14 +66,6 @@ function getModuleType(id) {
 
 function getPrestation(taux, heure) {
   return taux * heure;
-}
-
-function getIconsSave(id){
-  return `./icons/check.svg`;
-}
-
-function getIconsDel(id){
-  return `./icons/trash.svg`;
 }
 
 function goodJob(){
@@ -113,7 +123,7 @@ function toDelete(){
       text-align: center;
     }
     td{
-      width: 7%;
+      width: 5%;
     }
     .imgs{
       display: flex;
