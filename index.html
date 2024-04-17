@@ -5,13 +5,94 @@
     <link rel="icon" href="/favicon.ico">
     <link rel="stylesheet" href="/bootstrap.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Vite App</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app" v-cloak>
+    <nav>
+        <div class="logo">
+          <img src="./src/components/icons/logoVue2.png">
+          <img src="./src/components/icons/iconVue.png">
+        </div>
+    </nav>
+    <div class="contener">
+      <div class="header-cont">
+        <h6>Ajout d'une nouvelle données :</h6>
+      </div>
+      <div class="body-cont">
+        <div class="form-cont">
+          <form @submit.prevent="submitTeach">
+            <table>
+              <tr class="mat-nom">
+                <td><label class="form-label" for="matricule">Matricule:</label></td>
+                <td><input v-model="teachs.matricule" class="form-control" type="text" name="matricule" required></td>
+                <td class="nom"><label class="form-label" for="nom">Nom:</label></td>
+                <td><input v-model="teachs.nom" class="form-control" type="text" name="nom" required></td>
+              </tr>
+              <tr class="taux-heure">
+                <td><label class="form-label" for="tauxHoraire">Taux horaire:</label></td>
+                <td><input v-model="teachs.tauxHoraire" class="form-control" type="number" name="tauxHoraire" required></td>
+                <td class="heure"><label class="form-label" for="nbHeure">Nombre d'heures:</label></td>
+                <td><input v-model="teachs.nbHeure" class="form-control" type="number" name="nbHeure" required></td>
+              </tr>
+            </table>
+            <div class="btns">
+              <input type="submit" value="ajouter" class="btn btn-ligth">
+              <input type="submit" value="annuler" class="btn btn-secondary">
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="title">
+      <h1 class="text-center">Tableau des enseignants</h1>
+    </div>
+    <div class="tab">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col" >Matricule</th>
+            <th scope="col" >Nom</th>
+            <th scope="col" >Taux horaire</th>
+            <th scope="col" >Nombre d'heures</th>
+            <th scope="col" >Prestation</th>
+            <th scope="col" >Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="teach in localDB" :key="teach.id">
+            <td contenteditable="true" @blur="updateCell(teach, 'matricule', $event)">{{ teach.matricule }}</td>
+            <td contenteditable="true" @blur="updateCell(teach, 'nom', $event)">{{ teach.nom }}</td>
+            <td contenteditable="true" @blur="updateCell(teach, 'tauxHoraire', $event)">{{ teach.tauxHoraire }}</td>
+            <td contenteditable="true" @blur="updateCell(teach, 'nbHeure', $event)">{{ teach.nbHeure }}</td>
+            <td>{{ calculatePrestation(teach) }}</td>
+            <td>
+              <div class="imgs">
+                <img src="./src/components/icons/check.svg" @click="saveTeach(teach)">
+                <img src="./src/components/icons/trash.svg" @click="deleteTeach(teach)">
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="resultat">
+      <p>{{ calculateTotalPrestation() }}</p>
+    </div>
+    <div class="title">
+      <h1 class="text-center">Histogramme des prestations</h1>
+    </div>
+    <div class="histogram">
+      <my-chart></my-chart>
+    </div>
+    </div>
+    <script src="./vue.glo.js"></script>
     <script src="./axios.min.js"></script>
+    <script src="./src/api.js"></script>
     <script type="module" src="/src/main.js"></script>
+    <script src="./chart.js"></script>
     <script src="./sweetAlert.js"></script>
     <script src="./sweetAlert2.js"></script>
   </body>
-</html>
+</html> 
